@@ -2,11 +2,109 @@
 <body>
 <a href="www.baidu.com">baiduTest</a>
 
+
+
+
 <script type="text/javascript">
 document.write("<img src='timg.jpeg' />")
 </script>
 
 <h1>测试微信转发功能</h1>
+
+
+<script src="/portal/apps/wd/vip/js/jweixin-1.0.0.js"> </script>
+    <!--组件依赖js end-->
+<script language="javascript">
+ var result ="";
+    $(document).ready(function(){
+        var mySwiper = new Swiper('.index-banner',{
+            pagination: '.index-pagination',
+            loop:true,
+            grabCursor: true,
+            autoplay:3000,
+            paginationClickable: true,
+            onSlideChangeEnd : function() {
+                var bannerTitle = $(".index-banner ul li.swiper-slide-active img").attr("title");
+                $(".banner-title p").text(bannerTitle);
+            }
+        })
+        var bannerFstTitle = $(".index-banner ul li.swiper-slide-active img").attr("title");
+        $(".banner-title p").text(bannerFstTitle);
+        fjcHeight();
+        fontSizeHack();
+        $(".index-banner ul li img").show();
+    
+  var encodeLoc = EncodeUtf8(window.location.href); //取静态页面的url
+      
+        $.ajax({  
+               type: "GET",  
+               url: "/portal/api/cms/wtcms.jsp",  
+               data: "act=wxSign&urladdr="+encodeLoc,//jsonText  
+               //contentType: "application/json;charset=utf-8",  
+               dataType: "json",  
+               async: false,//同步  
+               success: function (data)
+      {
+     //alert(data);
+     result = data;
+    
+                  // result = eval('(' + data + ')');  
+               }, failure: function () {  
+                   
+               }  
+           })  ;
+ 
+   //alert(result.ip+"/"+result.timestamp+"/"+result.nonceStr+"/"+result.signature+"/"+result.url);
+     wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: result.appId, // 必填，公众号的唯一标识
+  timestamp:result.timestamp, 
+  nonceStr:  result.nonceStr, 
+     signature:  result.signature, 
+        jsApiList: [
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage' 
+  ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+   });
+})
+
+ 
+wx.ready(function () {
+ wx.onMenuShareTimeline({ //朋友圈分享
+    title: "中国文化网", //自定义分享标题
+    link: result.url,
+ desc: "中国文化网（中文版）是由中国人民共和国文化部外联局主办，中外文化交流中心承办的大型文化交流资讯（资源）网站。", //自定义分享摘要
+    imgUrl: 'http://cn.chinaculture.org/portal/site/wenhua/images/weixinico.png',//自定义分享时的缩略图
+    success: function () 
+ {
+  //在这里记录分享动作
+        // 用户确认分享后执行的回调函数
+  //alert("分享确认1");
+    },
+    cancel: function () { 
+        // 用户取消分享后执行的回调函数
+  //alert("分享取消1");
+    }
+    })
+ wx.onMenuShareAppMessage({ //分享给好友或微信群
+ 
+    title: "中国文化网",
+    link:  result.url,
+ desc: "中国文化网（中文版）是由中国人民共和国文化部外联局主办，中外文化交流中心承办的大型文化交流资讯（资源）网站。",
+    imgUrl: 'http://cn.chinaculture.org/portal/site/wenhua/images/weixinico.png',
+    success: function () 
+ {
+  //在这里记录分享动作
+        // 用户确认分享后执行的回调函数
+  //alert("分享确认");
+    },
+    cancel: function () { 
+        // 用户取消分享后执行的回调函数
+  //alert("分享取消");
+    }
+   })
+}) //wx.ready
+</script>
 
 <div style='margin:0 auto;width:0px;height:0px;overflow:hidden;'>
     <!--图片宽高大于400px，最好是一个正方形的图片-->
